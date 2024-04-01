@@ -5,7 +5,7 @@ const Home = () => {
   return (
     <View style={styles.container}>
       <Text>
-        Open up App.js to start working on your app 1isojdhugjkzk 22123!
+        Open up App.js to start working on your app 1isojdhugjkzk 221231!
       </Text>
     </View>
   );
