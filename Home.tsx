@@ -5,20 +5,64 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+
+import { Image } from "expo-image";
 
 const Home = () => {
+  
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  
+  const [BMI, setBMI] = useState(0.0);
+
+  const regex = /[A-Za-z]/g;
+  const found = height.match(regex);
+  const found2 = weight.match(regex);
+
+ React.useEffect(() => {
+  //  отрабатывает код внутри себя тогда когда изменяются значения в его квадратных скобках,
+   // есои там пусто - то он отрабатывает 1 раз в самом начале перед рендером экрана
+   setHeight("  ");
+ }, [found]);
+ React.useEffect(() => {
+  
+   setWeight("  ");
+ }, [found2]);
+
+  const handlerCalcBMI = () => {
+    const currentWeight = parseInt(weight);
+    const currentHeight = parseInt(height);
+    
+    
+
+  //   if (isNaN(currentWeight) || isNaN(currentHeight)) {
+  //    return;
+  //  }
+  
+
+    const heightMetrs = currentHeight / 100;
+    setBMI(Number((currentWeight / (heightMetrs * heightMetrs)).toFixed(1)));
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.titleText}>BMI Calculator</Text>
       <View style={styles.inputContainer}>
         <TextInput
+          value={height}
+          onChangeText={(value) => {
+            setHeight(value);
+          }}
           style={styles.input}
           placeholder="Heigth-M"
           placeholderTextColor={"rgba(90,90,190,1)"}
           keyboardType="number-pad"
         />
         <TextInput
+          value={weight}
+          onChangeText={(value) => {
+            setWeight(value);
+          }}
           style={styles.input}
           placeholder="Weigth-KG"
           placeholderTextColor={"rgba(90,90,190,1)"}
@@ -27,26 +71,63 @@ const Home = () => {
       </View>
 
       <TouchableOpacity
-        style={styles.goButton}
+      
+      
+      disabled={!weight || !height}
+     
+        style={[styles.goButton,
+          height.length >= 1 && weight.length >= 1 && { opacity: 1 },
+        ]}
         onPress={() => {
-          console.log("GO");
+          handlerCalcBMI();
         }}
       >
         <Text style={styles.goButtonText}>Go</Text>
       </TouchableOpacity>
 
-      <Text style={styles.BMIText}>0.00</Text>
-      <View style={styles.inputRectangle}>
+      <Text style={styles.BMIText}>{BMI}</Text>
+
+      <View style={styles.line} />
+
+      <View style={styles.ColorContainer}>
         <View
-        style={styles.rectangle1}/>
+          style={[
+            styles.YellowBlock,
+            BMI <= 18.5 && BMI >= 1 && { opacity: 1 },
+          ]}
+        >
+          <Image
+            style={styles.YellowImage}
+            source={require("./assets/yellow.png")}
+            contentFit="fill"
+          />
+          <Text style={styles.valueText}>Under 18</Text>
+          <Text style={styles.noteText}>Under Weight</Text>
+        </View>
+
         <View
-        style={styles.rectangle2}/>
-        <View
-        style={styles.rectangle3}/>
+          style={[styles.GreenBlock, BMI > 18.5 && BMI < 25 && { opacity: 1 }]}
+        >
+          <Image
+            style={styles.GreenImage}
+            source={require("./assets/green.png")}
+            contentFit="fill"
+          />
+          <Text style={styles.valueText}>18.5 - 25</Text>
+          <Text style={styles.noteText}>Normal Weight</Text>
+        </View>
+
+        <View style={[styles.RedBlock, BMI >= 25 && { opacity: 1 }]}>
+          <Image
+            style={styles.RedImage}
+            source={require("./assets/red.png")}
+            contentFit="fill"
+          />
+          <Text style={styles.valueText}>Above 25</Text>
+          <Text style={styles.noteText}>Over Weight</Text>
+        </View>
       </View>
     </View>
-
-    
   );
 };
 
@@ -81,6 +162,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
 
     marginTop: 30,
+    opacity: 0.3,
   },
 
   goButtonText: {
@@ -93,28 +175,71 @@ const styles = StyleSheet.create({
     fontSize: 35,
     marginTop: 40,
   },
-  inputRectangle: {
-    flexDirection: "row", 
-    gap: 20,
-    },
-  rectangle1: {
-    height: 250,
-    width: 100,
+
+  line: {
+    width: "100%",
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
+    height: 2,
+
+    marginTop: 100,
+  },
+
+  ColorContainer: {
+    flexDirection: "row",
+    gap: 15,
+
+    marginTop: 20,
+
+    paddingHorizontal: 15,
+  },
+
+  YellowBlock: {
     backgroundColor: "yellow",
-    borderRadius: 5,
+    borderRadius: 15,
+    height: 300,
+    width: 110,
+
+    alignItems: "center",
+
+    opacity: 0.3,
   },
-  rectangle2: {
-    height: 250,
-    width: 100,
+  GreenBlock: {
     backgroundColor: "green",
-    borderRadius: 5,
+    borderRadius: 15,
+    height: 300,
+    width: 110,
+
+    alignItems: "center",
+
+    opacity: 0.3,
   },
-  rectangle3: {
-    height: 250,
-    width: 100,
+  RedBlock: {
     backgroundColor: "red",
-    borderRadius: 5,
+    borderRadius: 15,
+    height: 300,
+    width: 110,
+
+    alignItems: "center",
+
+    opacity: 0.3,
   },
+  YellowImage: {
+    width: 120,
+    height: 70,
+    marginTop: 40,
+  },
+  GreenImage: {
+    width: 120,
+    height: 90,
+    marginTop: 20,
+  },
+  RedImage: {
+    width: 120,
+    height: 90,
+    marginTop: 20,
+  },
+  valueText: { fontSize: 15, fontWeight: "600", marginTop: 30 },
+  noteText: { fontSize: 15, fontWeight: "600", marginTop: 30 },
 });
 
 export default Home;
