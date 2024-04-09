@@ -16,19 +16,41 @@ const Home = () => {
   
   const [BMI, setBMI] = useState(0.0);
 
-  const regex = /[A-Za-z]/g;
-  const found = height.match(regex);
-  const found2 = weight.match(regex);
+  // const regex = /[A-Za-z]/g;
+  // const found = height.match(regex);
+  // const found2 = weight.match(regex);
 
- React.useEffect(() => {
+//  React.useEffect(() => {
   //  отрабатывает код внутри себя тогда когда изменяются значения в его квадратных скобках,
    // есои там пусто - то он отрабатывает 1 раз в самом начале перед рендером экрана
-   setHeight("  ");
- }, [found]);
- React.useEffect(() => {
+//    setHeight("  ");
+//  }, [found]);
+//  React.useEffect(() => {
   
-   setWeight("  ");
- }, [found2]);
+//    setWeight("  ");
+//  }, [found2]);
+
+function urFunc(height: string): string {
+  if (height.length <= 0) {
+      return '';
+  } else {
+      let res = '';
+      const regex = /[0-9]/g;
+      res = height.match(regex)?.join('') || '';
+      return res;
+  }
+}
+
+function urFunc1(weight: string): string {
+  if (weight.length <= 0) {
+      return '';
+  } else {
+      let res = '';
+      const regex = /[0-9]/g;
+      res = weight.match(regex)?.join('') || '';
+      return res;
+  }
+}
 
   const handlerCalcBMI = () => {
     const currentWeight = parseInt(weight);
@@ -51,7 +73,7 @@ const Home = () => {
         <TextInput
           value={height}
           onChangeText={(value) => {
-            setHeight(value);
+            setHeight(urFunc(value));
           }}
           style={styles.input}
           placeholder="Heigth-M"
@@ -61,7 +83,7 @@ const Home = () => {
         <TextInput
           value={weight}
           onChangeText={(value) => {
-            setWeight(value);
+            setWeight(urFunc1(value));
           }}
           style={styles.input}
           placeholder="Weigth-KG"
